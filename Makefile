@@ -27,3 +27,6 @@ install:
 	mkdir -p ${CONFIGPATH}
 	cp -r elmond/* ${ROOTPATH}
 	cp -r conf/* ${CONFIGPATH}
+
+dc_clean:
+	${DC_CMD} -f docker-compose.build.yml down -v

@@ -1,0 +1,2 @@
+elmond/*.py /usr/lib/perfsonar/elmond
+conf/* /etc/perfsonar/elmond

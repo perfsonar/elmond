@@ -1,0 +1,13 @@
+Source: perfsonar-elmond
+Maintainer: perfSONAR developers <debian@perfsonar.net>
+Section: misc
+Priority: optional
+Standards-Version: 4.3.0
+Build-Depends: debhelper (>= 10)
+Homepage: http://www.perfsonar.net
+
+Package: perfsonar-elmond
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3, python3-flask, python3-elasticsearch, python3-dateutil, python3-isodate, python3-urllib3
+Description: perfsonar Flask Application to maintain Esmond API
+ A package that maintains the esmond API through a Flask application that translates Elastic's output for Esmond

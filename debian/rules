@@ -10,8 +10,3 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	dh_installinit
-
-override_dh_fixperms:
-	dh_fixperms
-	chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
-	chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*

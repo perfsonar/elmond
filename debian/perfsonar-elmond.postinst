@@ -1,6 +1,8 @@
 #!/bin/sh
 # postinst script for perfsonar-archive
 
+chown -R perfsonar:perfsonar /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
+
 # enable and start elmond
 systemctl enable perfsonar-elmond.service
 systemctl start perfsonar-elmond.service

@@ -13,6 +13,5 @@ override_dh_auto_install:
 
 override_dh_fixperms:
 	dh_fixperms
-	chown -R perfsonar:perfsonar /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
 	chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
 	chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*

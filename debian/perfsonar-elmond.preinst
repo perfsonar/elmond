@@ -1,5 +1,5 @@
 #!/bin/sh
-# preinst script for perfsonar-archive
+# preinst script for perfsonar-elmond
 
 /usr/sbin/groupadd -r perfsonar 2> /dev/null || :
 /usr/sbin/useradd -g perfsonar -r -s /sbin/nologin -c "perfSONAR User" -d /tmp perfsonar 2> /dev/null || :

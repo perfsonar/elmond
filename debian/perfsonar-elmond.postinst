@@ -7,8 +7,9 @@ chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
 chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*
 
 # enable and start elmond
-systemctl enable perfsonar-elmond.service
-systemctl start perfsonar-elmond.service
+systemctl daemon-reload
+systemctl enable elmond.service
+systemctl start elmond.service
 
 #DEBHELPER#
 exit 0

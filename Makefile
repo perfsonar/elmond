@@ -18,7 +18,7 @@ centos7:
 
 dist:
 	mkdir /tmp/${PACKAGE}-${VERSION}.${RELEASE}
-	cp -rf ./conf ./elmond ./systemd ./Makefile ./perfsonar-elmond.spec /tmp/${PACKAGE}-${VERSION}.${RELEASE}
+	cp -rf ./config ./elmond ./systemd ./Makefile ./perfsonar-elmond.spec /tmp/${PACKAGE}-${VERSION}.${RELEASE}
 	tar czf ${PACKAGE}-${VERSION}.${RELEASE}.tar.gz -C /tmp ${PACKAGE}-${VERSION}.${RELEASE}
 	rm -rf /tmp/${PACKAGE}-${VERSION}.${RELEASE}
 

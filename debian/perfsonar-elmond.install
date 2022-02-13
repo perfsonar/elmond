@@ -1,3 +1,3 @@
 elmond/*.py /usr/lib/perfsonar/elmond
 config/* /etc/perfsonar/elmond
-systemd/elmond.service /lib/systemd/system/elmond.service
+systemd/elmond.service /etc/systemd/system/

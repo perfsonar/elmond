@@ -26,4 +26,4 @@ install:
 	mkdir -p ${ROOTPATH}
 	mkdir -p ${CONFIGPATH}
 	cp -r elmond/* ${ROOTPATH}
-	cp -r conf/* ${CONFIGPATH}
+	cp -r config/* ${CONFIGPATH}

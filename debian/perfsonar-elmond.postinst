@@ -1,0 +1,15 @@
+#!/bin/sh
+# postinst script for perfsonar-archive
+
+# assign correct permissions for configuration and application files
+chown -R perfsonar:perfsonar /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
+chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
+chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*
+
+# enable and start elmond
+systemctl daemon-reload
+systemctl enable elmond.service
+systemctl start elmond.service
+
+#DEBHELPER#
+exit 0

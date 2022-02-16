@@ -1,0 +1,3 @@
+elmond/*.py /usr/lib/perfsonar/elmond
+config/* /etc/perfsonar/elmond
+systemd/elmond.service /etc/systemd/system/

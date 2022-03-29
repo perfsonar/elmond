@@ -3,6 +3,7 @@
 PACKAGE=perfsonar-elmond
 ROOTPATH=/usr/lib/perfsonar/elmond
 CONFIGPATH=/etc/perfsonar/elmond
+HTTPD-CONFIGPATH=/etc/httpd/conf.d
 PERFSONAR_AUTO_VERSION=5.0.0
 PERFSONAR_AUTO_RELNUM=0.0.a1
 VERSION=${PERFSONAR_AUTO_VERSION}
@@ -18,15 +19,17 @@ centos7:
 
 dist:
 	mkdir /tmp/${PACKAGE}-${VERSION}.${RELEASE}
-	cp -rf ./config ./elmond ./systemd ./Makefile ./perfsonar-elmond.spec /tmp/${PACKAGE}-${VERSION}.${RELEASE}
+	cp -rf ./apache ./config ./elmond ./systemd ./Makefile ./perfsonar-elmond.spec /tmp/${PACKAGE}-${VERSION}.${RELEASE}
 	tar czf ${PACKAGE}-${VERSION}.${RELEASE}.tar.gz -C /tmp ${PACKAGE}-${VERSION}.${RELEASE}
 	rm -rf /tmp/${PACKAGE}-${VERSION}.${RELEASE}
 
 install:
 	mkdir -p ${ROOTPATH}
 	mkdir -p ${CONFIGPATH}
+	mkdir -p ${HTTPD-CONFIGPATH}
 	cp -r elmond/* ${ROOTPATH}
 	cp -r config/* ${CONFIGPATH}
+	cp -r apache/* ${HTTPD-CONFIGPATH}/
 
 dc_clean:
 	${DC_CMD} -f docker-compose.build.yml down -v

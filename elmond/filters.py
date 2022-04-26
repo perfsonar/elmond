@@ -366,20 +366,22 @@ def build_filters(params):
         elif param.startswith("pscheduler-reference"):
             #does it start with pscheduler-reference
             #decompose into dotted notation
-            key = re.sub(r'^pscheduler-',"", key)
+            key = re.sub(r'^pscheduler-',"", param)
             #The following is prone to error, we have no way to tell if a - 
             # is because its in original key or added by esmond archiver to 
             # separate nested objects. Handle a few known special cases but 
             # otherwise people should avoid hyphens in reference fields
-            key = param.replace("-",".")
+            key = key.replace("-",".")
             #special cases
-            key = param.replace("display.set","display-set")
-            key = param.replace("psconfig.created.by","psconfig.created-by")
-            key = param.replace("psconfig.created-by.user.agent","psconfig.created-by.user-agent")
+            key = key.replace("display.set","display-set")
+            key = key.replace("set.source","set-source")
+            key = key.replace("set.dest","set-dest")
+            key = key.replace("psconfig.created.by","psconfig.created-by")
+            key = key.replace("psconfig.created-by.user.agent","psconfig.created-by.user-agent")
         elif param.startswith("pscheduler-"):
             #does it start with pscheduler-testtype
             #decompose into dotted notation
-            key = re.sub(r'^pscheduler-.+?-', "", key) #remove prefix
+            key = re.sub(r'^pscheduler-.+?-', "", param) #remove prefix
             key = re.sub(r'^to-disk-', "", key)#handle special disk-to-disk case
             key = key.replace("-",".")
             key = "test.spec.{0}".format(key)

@@ -3,22 +3,7 @@
     "ELASTIC_PARAMS": {},
     "PROXY_PATH": "/esmond/perfsonar/archive",
     "FORCE_HTTPS_URLS": true,
-    "SUMMARIES": {
-        "throughput": [
-            {
-                "summary-window":   1800,
-                "event-type":   "throughput",
-                "summary-type":   "average"
-            }
-        ],
-        "packet-loss-rate": [
-            {
-                "summary-window":   1800,
-                "event-type":   "packet-loss-rate",
-                "summary-type":   "aggregation"
-            }
-        ]
-    },
+    "SUMMARIES": {},
     "SUMMARY_WINDOW_ROLLUP_NAMES": {
         "300": "5m",
         "3600": "1h",

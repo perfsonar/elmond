@@ -3,7 +3,6 @@
     "ELASTIC_PARAMS": {},
     "PROXY_PATH": "/esmond/perfsonar/archive",
     "FORCE_HTTPS_URLS": true,
-    "SUMMARIES": {},
     "SUMMARY_WINDOW_ROLLUP_NAMES": {
         "300": "5m",
         "3600": "1h",

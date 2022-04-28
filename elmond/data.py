@@ -106,7 +106,7 @@ def _extract_result_stats(key, result, is_rollup=False, conversion_factor=1):
     if is_rollup:
         stat_fields = ["maximum", "mean", "median", "minimum", "mode", "percentile-25", "percentile-75", "percentile-95", "standard-deviation", "variance"]
         for sf in stat_fields:
-            stats[sf] = result.get("result_{0}.value".format(sf), None)
+            stats[sf] = _extract_result_field("{0}_{1}.value".format(key, sf), result)
             if sf == "mode":
                 stats[sf] = [ stats[sf] ]
     else:
@@ -376,6 +376,8 @@ class EsmondData:
         #hit * because event types can belong to multiple test types
         #probably a may efficient way to do this
         is_rollup=False
+        raw_type = False
+        dfm_key = None
         index_name="pscheduler_*"
         time_field = "pscheduler.start_time"
         checksum_field = "pscheduler.test_checksum"
@@ -501,6 +503,9 @@ class EsmondData:
                 datum["val"] = result
             elif event_type.startswith("histogram-") and summary_type == "statistics":
                 conversion_factor = CONVERSION_FACTOR_MAP.get(event_type, 1)
+                result_stat_key = "result"
+                if dfm_key is not None and dfm_key in DATA_FIELD_MAP:
+                    result_stat_key = DATA_FIELD_MAP[dfm_key]
                 datum["val"] = _extract_result_stats(DATA_FIELD_MAP[dfm_key], result, is_rollup=is_rollup, conversion_factor=conversion_factor)
             elif event_type.startswith("histogram-"):
                 conversion_factor = CONVERSION_FACTOR_MAP.get(event_type, 1)

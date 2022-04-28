@@ -283,7 +283,7 @@ def _build_result_agg(event_type, summary_type):
                         "lost": "result_lost",
                         "sent": "result_sent"
                     },
-                    "buckets_script": "params.lost / params.sent"
+                    "script": "params.lost / params.sent"
                 }
 
             }

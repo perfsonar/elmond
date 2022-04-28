@@ -506,7 +506,7 @@ class EsmondData:
                 result_stat_key = "result"
                 if dfm_key is not None and dfm_key in DATA_FIELD_MAP:
                     result_stat_key = DATA_FIELD_MAP[dfm_key]
-                datum["val"] = _extract_result_stats(DATA_FIELD_MAP[dfm_key], result, is_rollup=is_rollup, conversion_factor=conversion_factor)
+                datum["val"] = _extract_result_stats(result_stat_key, result, is_rollup=is_rollup, conversion_factor=conversion_factor)
             elif event_type.startswith("histogram-"):
                 conversion_factor = CONVERSION_FACTOR_MAP.get(event_type, 1)
                 hist = _extract_result_field(DATA_FIELD_MAP[dfm_key], result)

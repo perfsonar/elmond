@@ -106,7 +106,8 @@ def _extract_result_stats(key, result, is_rollup=False, conversion_factor=1):
     if is_rollup:
         stat_fields = ["maximum", "mean", "median", "minimum", "mode", "percentile-25", "percentile-75", "percentile-95", "standard-deviation", "variance"]
         for sf in stat_fields:
-            stats[sf] = _extract_result_field("{0}_{1}.value".format(key, sf), result)
+            #note that date_histo isn't really needed and is popped-off by _extract_result_field
+            stats[sf] = _extract_result_field("date_histo.{0}_{1}.value".format(key, sf), result)
             if sf == "mode":
                 stats[sf] = [ stats[sf] ]
     else:
@@ -304,6 +305,7 @@ def _build_result_agg(event_type, summary_type):
             }
         }
     elif summary_type == "statistics":
+        agg_field = DATA_FIELD_MAP.get("{0}/statistics".format(event_type), None)
         agg = {
             "result_maximum": {
                 "max": {

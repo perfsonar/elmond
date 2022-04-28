@@ -423,7 +423,7 @@ class EsmondData:
                 raise BadRequest("{0} is not a supported summary_window".format(sw))
             result_agg = _build_result_agg(event_type, summary_type)
             if result_agg is None:
-                raise BadRequest("Unable to build aggregation for {0}/{1}".format((event_type, summary_type)))
+                raise BadRequest("Unable to build aggregation for {0}/{1}".format(event_type, summary_type))
             dsl["size"] = 0
             dsl["_source"] = False
             dsl["aggs"] = {

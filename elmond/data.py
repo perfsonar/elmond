@@ -51,16 +51,6 @@ CONVERSION_FACTOR_MAP = {
 }
 
 log = logging.getLogger('elmond')
-
-def _calc_rollup_average(obj, key):
-    val = obj.get("{0}.avg.value".format(key), None)
-    if val is None:
-        return None
-    count = obj.get("{0}.avg._count".format(key), None)
-    if not count:
-        return None
-    
-    return float(val)/count
     
 def _build_esmond_histogram(elastic_histo, conversion_factor=1):
     values = elastic_histo.get("values", [])
@@ -114,18 +104,11 @@ def _extract_result_field(key, result):
 def _extract_result_stats(key, result, is_rollup=False, conversion_factor=1):
     stats = {}
     if is_rollup:
-        stats = {
-            "maximum": result.get("{0}.max.max.value".format(key), None),
-            "mean": _calc_rollup_average(result, "{0}.mean".format(key)),
-            "median": _calc_rollup_average(result, "{0}.median".format(key)),
-            "minimum": result.get("{0}.min.min.value".format(key), None),
-            "mode": [_calc_rollup_average(result, "{0}.mode".format(key))],
-            "percentile-25": _calc_rollup_average(result, "{0}.p_25".format(key)),
-            "percentile-75": _calc_rollup_average(result, "{0}.p_75".format(key)),
-            "percentile-95": _calc_rollup_average(result, "{0}.p_95".format(key)),
-            "standard-deviation": _calc_rollup_average(result, "{0}.stddev".format(key)),
-            "variance": _calc_rollup_average(result, "{0}.variance".format(key))
-        }
+        stat_fields = ["maximum", "mean", "median", "minimum", "mode", "percentile-25", "percentile-75", "percentile-95", "standard-deviation", "variance"]
+        for sf in stat_fields:
+            stats[sf] = result.get("result_{0}.value".format(sf), None)
+            if sf == "mode":
+                stats[sf] = [ stats[sf] ]
     else:
         field = _extract_result_field(key, result)
         if field is None:
@@ -277,6 +260,105 @@ def _extract_packet_loss_rate(obj, key):
     
     return float(lost_val)/sent_val
 
+def _build_result_agg(event_type, summary_type):
+    agg = None
+    agg_field = DATA_FIELD_MAP.get("{0}/base".format(event_type), None)
+    if summary_type == "aggregations" and event_type.startswith("packet-loss-rate"):
+        #packet loss rate aggregation total lost and sent then divide
+        agg = {
+            "result_lost": {
+                "sum": {
+                    "field": agg_field
+                }
+            },
+            "result_sent": {
+                "sum": {
+                    "field": DATA_FIELD_MAP["packet-count-sent/base"]
+                }
+            },
+            "result": {
+                "bucket_script": {
+                    "buckets_path": {
+                        "lost": "result_lost",
+                        "sent": "result_sent"
+                    },
+                    "buckets_script": "params.lost / params.sent"
+                }
+
+            }
+        }
+    elif summary_type == "aggregations":
+        agg = {
+            "result": {
+                "sum": {
+                    "field": agg_field
+                }
+            }
+        }
+    elif summary_type == "averages":
+        agg = {
+            "result": {
+                "avg": {
+                    "field": agg_field
+                }
+            }
+        }
+    elif summary_type == "statistics":
+        agg = {
+            "result_maximum": {
+                "max": {
+                    "field": "{0}.max".format(agg_field)
+                }
+            },
+            "result_minimum": {
+                "min": {
+                    "field": "{0}.min".format(agg_field)
+                }
+            },
+            "result_mean": {
+                "avg": {
+                    "field": "{0}.mean".format(agg_field)
+                }
+            },
+            "result_median": {
+                "avg": {
+                    "field": "{0}.median".format(agg_field)
+                }
+            },
+            "result_mode": {
+                "avg": {
+                    "field": "{0}.mode".format(agg_field)
+                }
+            },
+            "result_percentile-25": {
+                "avg": {
+                    "field": "{0}.p_25".format(agg_field)
+                }
+            },
+            "result_percentile-75": {
+                "avg": {
+                    "field": "{0}.p_75".format(agg_field)
+                }
+            },
+            "result_percentile-95": {
+                "avg": {
+                    "field": "{0}.p_95".format(agg_field)
+                }
+            },
+            "result_standard-deviation": {
+                "avg": {
+                    "field": "{0}.stddev".format(agg_field)
+                }
+            },
+            "result_variance": {
+                "avg": {
+                    "field": "{0}.variance".format(agg_field)
+                }
+            }
+        }
+    
+    return agg
+
 class EsmondData:
 
     def __init__(self, es):
@@ -299,9 +381,6 @@ class EsmondData:
         checksum_field = "pscheduler.test_checksum"
         if summary_window > 0:
             is_rollup=True
-            index_name = "rollup_{0}".format(index_name)
-            time_field = "{0}.date_histogram.timestamp".format(time_field)
-            checksum_field = "{0}.keyword.terms.value".format(checksum_field)
 
         #handle limit and offset
         result_size = DEFAULT_RESULT_LIMIT
@@ -321,16 +400,6 @@ class EsmondData:
 
         #data query
         dsl = {
-            "size": result_size,
-            "from": result_offset,
-            "_source": [ time_field ],
-            "sort": [
-              {
-                time_field: {
-                  "order": "asc"
-                }
-              }
-            ], 
             "query": {
               "bool": {
                 "filter": [
@@ -352,35 +421,62 @@ class EsmondData:
             sw=str(summary_window)
             if sw not in sw_map:
                 raise BadRequest("{0} is not a supported summary_window".format(sw))
-            dsl["query"]["bool"]["filter"].append({ "term": { "pscheduler.start_time.date_histogram.interval": sw_map[sw] } })
+            result_agg = _build_result_agg(event_type, summary_type)
+            if result_agg is None:
+                raise BadRequest("Unable to build aggregation for {0}/{1}".format((event_type, summary_type)))
+            dsl["size"] = 0
+            dsl["_source"] = False
+            dsl["aggs"] = {
+                "date_histo": {
+                    "date_histogram": {
+                        "field": time_field,
+                        "fixed_interval": sw_map[sw]
+                    },
+                    "aggs": result_agg
+                }
+            }
         else:
+            #set filters used in raw data queries
+            dsl["size"] = result_size
+            dsl["from"] = result_offset
+            dsl["_source"] = [ time_field ]
+            dsl["sort"] = [
+              {
+                time_field: {
+                  "order": "asc"
+                }
+              }
+            ]
             #optimization: filter based on whether we want succeeded or not
             succeeded_filter_val = (event_type != 'failures')
             dsl["query"]["bool"]["filter"].append({ "term": { "result.succeeded": succeeded_filter_val } })
+            #limit fields returned
+            dfm_key = "{0}/{1}".format(event_type, summary_type)
+            raw_type = True
+            if dfm_key in DATA_FIELD_MAP:
+                raw_type = False
+                if isinstance(DATA_FIELD_MAP[dfm_key], list):
+                    dsl["_source"].extend(DATA_FIELD_MAP[dfm_key])
+                else:
+                    dsl["_source"].append(DATA_FIELD_MAP[dfm_key])
+            elif event_type == "pscheduler-raw":
+                dsl["_source"].append("result.*")
+            else:
+                raise BadRequest("Unrecognized event type {0}".format(event_type))
         
         #handle time filters
         time_filter = build_time_filter(q, time_field=time_field)
         if time_filter:
             dsl["query"]["bool"]["filter"].append(time_filter)
-        
-        #limit fields returned
-        dfm_key = "{0}/{1}".format(event_type, summary_type)
-        raw_type = True
-        if dfm_key in DATA_FIELD_MAP:
-            raw_type = False
-            if isinstance(DATA_FIELD_MAP[dfm_key], list):
-                dsl["_source"].extend(DATA_FIELD_MAP[dfm_key])
-            else:
-                dsl["_source"].append(DATA_FIELD_MAP[dfm_key])
-        elif event_type == "pscheduler-raw":
-            dsl["_source"].append("result.*")
-        else:
-            raise BadRequest("Unrecognized event type {0}".format(event_type))
-        
+            
         #exec query
         res = self.es.search(index=index_name, body=dsl)
-        hits = res.get("hits", {}).get("hits", [])
-        
+        #handle results
+        hits = []
+        if is_rollup:
+            hits = res.get("aggregations", {}).get("date_histo", {}).get("buckets", [])
+        else:
+            hits = res.get("hits", {}).get("hits", [])
         #parse results
         data = []
         for hit in hits:
@@ -388,10 +484,10 @@ class EsmondData:
             result={}
             if is_rollup:
                 #already a timestamp
-                ts = hit.get("_source", {}).get("pscheduler.start_time.date_histogram.timestamp", None)
+                ts = hit.get("key", None)
                 if ts:
-                    ts = int(ts/1000)
-                result = hit.get("_source", None)
+                    ts = int(int(ts)/1000)
+                result = hit
             else:
                 #date string we have to convert
                 ts = datestr_to_timestamp(hit.get("_source", {}).get("pscheduler", {}).get("start_time", None))
@@ -425,13 +521,9 @@ class EsmondData:
                 if err_msg is None:
                     continue
                 datum["val"] = { "error": err_msg }
-            elif event_type.startswith("packet-loss-rate") and summary_type == "aggregations":
-                datum["val"] = _extract_packet_loss_rate(result, DATA_FIELD_MAP[dfm_key])
-            elif summary_type == "averages":
-                datum["val"] = _calc_rollup_average(result, DATA_FIELD_MAP[dfm_key])
             elif is_rollup:
-                #rollups just have dotted string keys
-                datum["val"] = result.get(DATA_FIELD_MAP[dfm_key], None)
+                #rollups of single values
+                datum["val"] = result.get("result", {}).get("value", None)
             else:
                 #extract from the map
                 datum["val"] = _extract_result_field(DATA_FIELD_MAP[dfm_key], result)

@@ -1,5 +1,5 @@
 #
-# Makefile for pScheduler top-level directory
+# Makefile for unibuild top-level directory
 #
 
 default: build

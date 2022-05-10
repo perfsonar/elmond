@@ -1,1 +1,4 @@
 artifacts/
+unibuild-log
+unibuild-work/
+unibuild-repo/

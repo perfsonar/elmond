@@ -9,7 +9,7 @@ Summary:        Powerful extensions to the standard datetime module
 Group:          Development/Languages
 License:        BSD
 URL:            https://github.com/dateutil/dateutil
-Source0:        https://github.com/dateutil/dateutil/archive/%{version}/%{modname}-%{version}.tar.gz
+Source0:        %{modname}-%{version}.tar.gz
 
 BuildArch:      noarch
 BuildRequires:  python3-sphinx

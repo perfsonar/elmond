@@ -1,6 +1,6 @@
 %define install_base        /usr/lib/perfsonar
 %define elmond_base         %{install_base}/elmond
-%define config_base         /etc/perfsonar/elmond
+%define config_base         %{_sysconfdir}/perfsonar/elmond
 
 #Version variables set by automated scripts
 %define perfsonar_auto_version 5.0.0
@@ -13,8 +13,7 @@ Summary:		perfSONAR Elmond
 License:		ASL 2.0
 Group:			Development/Libraries
 URL:			http://www.perfsonar.net
-Source0:		perfsonar-elmond-%{version}.%{perfsonar_auto_relnum}.tar.gz
-BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source0:		perfsonar-elmond-%{version}.tar.gz
 BuildArch:		noarch
 Requires:       python3
 Requires:       python3-flask
@@ -31,7 +30,7 @@ A package that installs the perfSONAR Elmond which converts Esmond queries to qu
 /usr/sbin/useradd -g perfsonar -r -s /sbin/nologin -c "perfSONAR User" -d /tmp perfsonar 2> /dev/null || :
 
 %prep
-%setup -q -n %{name}-%{version}.%{perfsonar_auto_relnum}
+%setup -q -n %{name}-%{version}
 
 %build
 

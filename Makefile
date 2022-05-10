@@ -1,32 +1,39 @@
-# Makefile for perfSONAR Elmond
 #
-PACKAGE=perfsonar-elmond
-ROOTPATH=/usr/lib/perfsonar/elmond
-CONFIGPATH=/etc/perfsonar/elmond
-PERFSONAR_AUTO_VERSION=5.0.0
-PERFSONAR_AUTO_RELNUM=0.0.a1
-VERSION=${PERFSONAR_AUTO_VERSION}
-RELEASE=${PERFSONAR_AUTO_RELNUM}
-DC_CMD_BASE=docker-compose
-DC_CMD=${DC_CMD_BASE} -p ${PACKAGE}
+# Makefile for pScheduler top-level directory
+#
 
-centos7:
-	mkdir -p ./artifacts/centos7
-	${DC_CMD} -f docker-compose.build.yml up --build --no-start centos7
-	docker cp ${PACKAGE}_centos7_1:/root/rpmbuild/SRPMS ./artifacts/centos7/SRPMS
-	docker cp ${PACKAGE}_centos7_1:/root/rpmbuild/RPMS/noarch ./artifacts/centos7/RPMS
+default: build
 
-dist:
-	mkdir /tmp/${PACKAGE}-${VERSION}.${RELEASE}
-	cp -rf ./config ./elmond ./systemd ./Makefile ./perfsonar-elmond.spec /tmp/${PACKAGE}-${VERSION}.${RELEASE}
-	tar czf ${PACKAGE}-${VERSION}.${RELEASE}.tar.gz -C /tmp ${PACKAGE}-${VERSION}.${RELEASE}
-	rm -rf /tmp/${PACKAGE}-${VERSION}.${RELEASE}
 
-install:
-	mkdir -p ${ROOTPATH}
-	mkdir -p ${CONFIGPATH}
-	cp -r elmond/* ${ROOTPATH}
-	cp -r config/* ${CONFIGPATH}
+BUILD_LOG=unibuild-log
 
-dc_clean:
-	${DC_CMD} -f docker-compose.build.yml down -v
+ifdef START
+UNIBUILD_OPTS += --start $(START)
+endif
+ifdef STOP
+UNIBUILD_OPTS += --stop $(STOP)
+endif
+
+# The shell command below does the equivalent of BASH's pipefail
+# within the confines of POSIX.
+# Source: https://unix.stackexchange.com/a/70675/15184
+build:
+	rm -rf $(BUILD_LOG)
+	((( \
+	(unibuild build $(UNIBUILD_OPTS); echo $$? >&3) \
+	| tee $(BUILD_LOG) >&4) 3>&1) \
+	| (read XS; exit $$XS) \
+	) 4>&1
+TO_CLEAN += $(BUILD_LOG)
+
+
+uninstall:
+	unibuild make --reverse $@
+
+fresh: uninstall build
+
+clean:
+	unibuild make $(UNIBUILD_OPTS) clean
+	unibuild clean
+	rm -rf $(TO_CLEAN)
+	find . -name '*~' | xargs rm -f

@@ -7,7 +7,7 @@ Summary:        Client for Elasticsearch
 
 License:        ASL 2.0
 URL:            https://github.com/elasticsearch/elasticsearch-py
-Source0:        https://pypi.io/packages/source/e/%{tarball_name}/%{tarball_name}-%{version}.tar.gz
+Source0:        %{tarball_name}-%{version}.tar.gz
 BuildArch:      noarch
 
 BuildRequires:  python%{python3_pkgversion}-devel

@@ -42,6 +42,7 @@ This package contains %{summary}.
 %autosetup -p0 -n %{modname}-%{version}
 iconv --from=ISO-8859-1 --to=UTF-8 NEWS > NEWS.new
 mv NEWS.new NEWS
+ln -s /usr/bin/sphinx-build-3 /usr/bin/sphinx-build
 
 %build
 %py3_build

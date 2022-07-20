@@ -49,6 +49,8 @@ rm -rf %{buildroot}
 #Restart/enable elmond 
 %systemd_post elmond.service
 if [ "$1" = "1" ]; then
+    mkdir -p /var/log/perfsonar/
+    chown perfsonar:perfsonar /var/log/perfsonar
     #if new install, then enable
     systemctl enable elmond.service
     systemctl start elmond.service

@@ -22,6 +22,7 @@ case "$1" in
         /usr/sbin/a2enmod ssl
         /usr/sbin/a2enmod proxy
         /usr/sbin/a2enmod proxy_http
+        /usr/sbin/a2enmod headers
         /usr/sbin/a2enconf apache-elmond
         systemctl enable apache2
         systemctl restart apache2

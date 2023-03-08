@@ -45,8 +45,6 @@ make ROOTPATH=%{buildroot}%{elmond_base} CONFIGPATH=%{buildroot}%{config_base} H
 rm -rf %{buildroot}
 
 %post
-mkdir -p /var/log/perfsonar
-chown perfsonar:perfsonar /var/log/perfsonar
 #Restart/enable elmond 
 %systemd_post elmond.service
 if [ "$1" = "1" ]; then

@@ -26,7 +26,7 @@ DATA_FIELD_MAP = {
     "packet-count-sent/base": "result.packets.sent",
     "packet-duplicates/base": "result.packets.duplicated",
     "packet-duplicates-bidir/base": "result.packets.duplicated",
-    "packet-loss-rate/aggregations": "result.packets",
+    "packet-loss-rate/aggregations": "result.value",
     "packet-loss-rate/base": "result.packets.loss",
     "packet-loss-rate-bidir/aggregations": "result.value",
     "packet-loss-rate-bidir/base": "result.packets.loss",
@@ -253,15 +253,6 @@ def _extract_packet_trace(key, result, event_type):
     
     return packet_trace
 
-
-def _extract_packet_loss_rate(obj, key):
-    lost_val = obj.get(DATA_FIELD_MAP["packet-count-lost/aggregations"], None)
-    sent_val = obj.get(DATA_FIELD_MAP["packet-count-sent/aggregations"], None)
-    if lost_val is None or not sent_val:
-        return None
-    
-    return float(lost_val)/sent_val
-
 def _build_result_agg(event_type, summary_type):
     agg = None
     agg_field = DATA_FIELD_MAP.get("{0}/base".format(event_type), None)
@@ -270,7 +261,7 @@ def _build_result_agg(event_type, summary_type):
         agg = {
             "result_lost": {
                 "sum": {
-                    "field": agg_field
+                    "field": DATA_FIELD_MAP["packet-count-lost/base"]
                 }
             },
             "result_sent": {
@@ -435,6 +426,7 @@ class EsmondData:
                 "date_histo": {
                     "date_histogram": {
                         "field": time_field,
+                        "min_doc_count": 1, 
                         "fixed_interval": sw_map[sw]
                     },
                     "aggs": result_agg
@@ -500,7 +492,7 @@ class EsmondData:
                 ts = datestr_to_timestamp(hit.get("_source", {}).get("pscheduler", {}).get("start_time", None))
                 result = hit.get("_source", {}).get("result", None)
                 psched_result = hit.get("_source", {}).get("pscheduler", None)
-            if not ts or (not result and not event_type.startswith("pscheduler-run-href")) or not psched_result:
+            if not ts or (event_type.startswith("pscheduler-run-href") and not psched_result) or (not event_type.startswith("pscheduler-run-href") and not result):
                 continue
             datum = { "ts": ts }
             #get value - event type specific. 

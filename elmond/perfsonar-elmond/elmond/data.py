@@ -44,7 +44,8 @@ DATA_FIELD_MAP = {
     "throughput/averages": "result.throughput",
     "throughput/base": "result.throughput",
     "throughput-subintervals/base": "result.intervals.json",
-    "time-error-estimates/base": "result.max_clock_error"
+    "time-error-estimates/base": "result.max_clock_error",
+    "pscheduler-run-href/base": "pscheduler.run_href"
 }
 CONVERSION_FACTOR_MAP = {
     "histogram-rtt": 1000 #convert rtt to ms
@@ -474,6 +475,7 @@ class EsmondData:
             dsl["query"]["bool"]["filter"].append(time_filter)
             
         #exec query
+        log.info("index_name={} event_type={} dsl={}".format(index_name, event_type, dsl))
         res = self.es.search(index=index_name, body=dsl)
         #handle results
         hits = []
@@ -486,6 +488,7 @@ class EsmondData:
         for hit in hits:
             #get timestamp
             result={}
+            psched_result = {}
             if is_rollup:
                 #already a timestamp
                 ts = hit.get("key", None)
@@ -496,7 +499,8 @@ class EsmondData:
                 #date string we have to convert
                 ts = datestr_to_timestamp(hit.get("_source", {}).get("pscheduler", {}).get("start_time", None))
                 result = hit.get("_source", {}).get("result", None)
-            if not ts or not result:
+                psched_result = hit.get("_source", {}).get("pscheduler", None)
+            if not ts or (not result and not event_type.startswith("pscheduler-run-href")) or not psched_result:
                 continue
             datum = { "ts": ts }
             #get value - event type specific. 
@@ -531,11 +535,14 @@ class EsmondData:
             elif is_rollup:
                 #rollups of single values
                 datum["val"] = result.get("result", {}).get("value", None)
+            elif event_type.startswith("pscheduler-run-href"):
+                #special case where JSON is not in result, but in pscheduler section
+                datum["val"] = _extract_result_field(DATA_FIELD_MAP[dfm_key], psched_result)
             else:
                 #extract from the map
                 datum["val"] = _extract_result_field(DATA_FIELD_MAP[dfm_key], result)
             
-            #if we didn't find anything continue - esmond never has a null point (i think)
+            #if we didn't find anything continue - esmond never ha s a null point (i think)
             if datum["val"] is None:
                 continue
             

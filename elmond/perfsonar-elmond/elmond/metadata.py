@@ -275,8 +275,7 @@ class EsmondMetadataFieldParser:
         for et in self._get_event_types(test_spec):
             self.__add_event_type(et, target, md_key=md_key, time_added=time_added)
         self.__add_event_type('pscheduler-run-href', target, md_key=md_key, time_added=time_added)
-        self.__add_event_type('pscheduler-raw', target, md_key=md_key, time_added=time_added)
-        
+
     def _parse_metadata_field(self, key, val, target):
         if type(val) is list:
             for (i, v) in enumerate(val):
@@ -465,6 +464,12 @@ class EsmondRawMetadataFieldParser(EsmondMetadataFieldParser):
             val = test_spec[field]
             self._parse_metadata_field(key, val, target)
 
+    def _get_event_types(self, test_spec):
+        event_types = [
+            'pscheduler-raw'
+        ]
+        return event_types
+
 class EsmondDiskToDiskMetadataFieldParser(EsmondRawMetadataFieldParser):
     field_map = {
         'parallel': 'bw-parallel-streams',
@@ -476,7 +481,8 @@ class EsmondDiskToDiskMetadataFieldParser(EsmondRawMetadataFieldParser):
     def _get_event_types(self, test_spec):
         event_types = [
             'failures',
-            'throughput'
+            'throughput',
+            'pscheduler-raw'
         ]
         return event_types
 

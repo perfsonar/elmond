@@ -16,6 +16,7 @@ Group:			Development/Libraries
 URL:			http://www.perfsonar.net
 Source0:		perfsonar-elmond-%{version}.tar.gz
 BuildArch:		noarch
+Requires:       perfsonar-common
 Requires:       python3
 Requires:       python3-flask
 Requires:       python3-elasticsearch
@@ -27,10 +28,6 @@ Requires:       mod_ssl
 
 %description
 A package that installs the perfSONAR Elmond which converts Esmond queries to queries understood by Elastic.
-
-%pre
-/usr/sbin/groupadd -r perfsonar 2> /dev/null || :
-/usr/sbin/useradd -g perfsonar -r -s /sbin/nologin -c "perfSONAR User" -d /tmp perfsonar 2> /dev/null || :
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -48,8 +45,6 @@ rm -rf %{buildroot}
 #Restart/enable elmond 
 %systemd_post elmond.service
 if [ "$1" = "1" ]; then
-    mkdir -p /var/log/perfsonar/
-    chown perfsonar:perfsonar /var/log/perfsonar
     #if new install, then enable
     systemctl enable elmond.service
     systemctl start elmond.service

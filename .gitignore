@@ -2,3 +2,4 @@ artifacts/
 unibuild-log
 unibuild-work/
 unibuild-repo/
+multiarch_build/

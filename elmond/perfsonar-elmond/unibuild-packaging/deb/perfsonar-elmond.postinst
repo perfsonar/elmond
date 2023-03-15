@@ -8,24 +8,22 @@ case "$1" in
         mkdir -p /var/log/perfsonar
         chown perfsonar:perfsonar /var/log/perfsonar
 
-        # assign correct permissions for configuration and application files
+        # Assign correct permissions for configuration and application files
         chown -R perfsonar:perfsonar /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
         chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
         chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*
 
-        # enable and start elmond
-        systemctl daemon-reload
-        systemctl enable elmond.service
-        systemctl start elmond.service
+        # Enable and restart apache for reverse proxy
+        # apache setup
+        if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+            . /usr/share/apache2/apache2-maintscript-helper
 
-        #Enable and restart apache for reverse proxy
-        /usr/sbin/a2enmod ssl
-        /usr/sbin/a2enmod proxy
-        /usr/sbin/a2enmod proxy_http
-        /usr/sbin/a2enmod headers
-        /usr/sbin/a2enconf apache-elmond
-        systemctl enable apache2
-        systemctl restart apache2
+            apache2_invoke enmod ssl
+            apache2_invoke enmod proxy
+            apache2_invoke enmod proxy_http
+            apache2_invoke enmod headers
+            apache2_invoke enconf apache-elmond
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

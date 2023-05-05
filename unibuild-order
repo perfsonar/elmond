@@ -20,6 +20,6 @@ changecom()dnl
 
 # GENERAL-PURPOSE MACROS
 
-python-elasticsearch
-python-dateutil
+ifelse(FAMILY/MAJOR,RedHat/7,python-elasticsearch)
+ifelse(FAMILY/MAJOR,RedHat/7,python-dateutil)
 elmond

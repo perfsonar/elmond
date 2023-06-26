@@ -1,10 +1,12 @@
 Source: perfsonar-elmond
 Maintainer: perfSONAR developers <debian@perfsonar.net>
-Section: net
+Section: misc
 Priority: optional
 Standards-Version: 4.3.0
 Build-Depends: debhelper (>= 10)
 Homepage: http://www.perfsonar.net
+Vcs-Git: https://github.com/perfsonar/elmond.git
+Vcs-Browser: https://github.com/perfsonar/elmond/tree/master
 
 Package: perfsonar-elmond
 Architecture: all

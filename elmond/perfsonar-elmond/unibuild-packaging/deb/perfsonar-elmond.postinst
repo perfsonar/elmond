@@ -13,6 +13,9 @@ case "$1" in
         chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
         chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*
 
+        #if new install, then enable
+        systemctl enable elmond.service
+
         # Enable and restart apache for reverse proxy
         # apache setup
         if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then

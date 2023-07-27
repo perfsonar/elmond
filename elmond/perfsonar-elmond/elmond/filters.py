@@ -374,8 +374,8 @@ def build_filters(params):
             key = key.replace("-",".")
             #special cases
             key = key.replace("display.set","display-set")
-            key = key.replace("set.source","set-source")
-            key = key.replace("set.dest","set-dest")
+            key = key.replace("set.source","set-source.keyword")
+            key = key.replace("set.dest","set-dest.keyword")
             key = key.replace("psconfig.created.by","psconfig.created-by")
             key = key.replace("psconfig.created-by.user.agent","psconfig.created-by.user-agent")
         elif param.startswith("pscheduler-"):

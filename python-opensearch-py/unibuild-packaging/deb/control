@@ -1,0 +1,19 @@
+Source: opensearch-py
+Maintainer: perfSONAR developers <debian@perfsonar.net>
+Section: misc
+Priority: optional
+Standards-Version: 4.5.0
+Build-Depends: 
+    debhelper (>= 10),
+    dh-python,
+    python3-all,
+    python3-setuptools,
+    python3-pip
+Homepage: https://pypi.org/project/opensearch-py/
+Vcs-Git: https://github.com/opensearch-project/opensearch-py
+Vcs-Browser: https://github.com/opensearch-project/opensearch-py/tree/main
+
+Package: python3-opensearch-py
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3, python3-dateutil, python3-requests, python3-certifi, python3-urllib3
+Description: An OpenSearch Python Client

@@ -1,0 +1,6 @@
+opensearch-py (2.4.2-1) perfsonar-5.1-snapshot; urgency=low
+
+  * Initial package
+
+ -- Andy Lake <andy@es.net>  Mon, 26 Feb 2024 12:14:48 +0000
+ 

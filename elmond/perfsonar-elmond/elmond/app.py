@@ -4,7 +4,7 @@ import json
 import os
 import sys
 from data import EsmondData
-from elasticsearch import Elasticsearch
+from opensearchpy import OpenSearch
 from flask import Flask, Response, request, g
 from metadata import EsmondMetadata
 from werkzeug.exceptions import NotFound
@@ -40,7 +40,7 @@ def create_app(test_config=None):
     #todo: error handling
     es_hosts = config.get("ELASTIC_HOSTS", ['localhost'])
     elastic_params = config.get("ELASTIC_PARAMS", {})
-    es = Elasticsearch(es_hosts, **elastic_params)
+    es = OpenSearch(es_hosts, **elastic_params)
 
     #function for dumping a json response
     def json_response(obj):

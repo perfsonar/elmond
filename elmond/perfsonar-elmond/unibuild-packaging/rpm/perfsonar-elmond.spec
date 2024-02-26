@@ -19,7 +19,7 @@ BuildArch:		noarch
 Requires:       perfsonar-common
 Requires:       python3
 Requires:       python3-flask
-Requires:       python3-elasticsearch
+Requires:       python3-opensearch-py
 Requires:       python3-dateutil
 Requires:       python3-isodate
 Requires:       python3-urllib3

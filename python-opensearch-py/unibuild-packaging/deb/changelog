@@ -4,3 +4,9 @@ opensearch-py (2.4.2-1) perfsonar-5.1; urgency=low
 
  -- perfSONAR developers <debian@perfsonar.net>  Tue, 23 Apr 2024 09:52:00 -0400
  
+opensearch-py (2.4.2-1) perfsonar-5.1; urgency=low
+
+  * Initial package
+
+ -- perfSONAR developers <debian@perfsonar.net>  Tue, 23 Apr 2024 09:52:00 -0400
+ 

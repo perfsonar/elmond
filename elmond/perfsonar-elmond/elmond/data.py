@@ -1,6 +1,6 @@
-from util import *
+from .util import *
 from werkzeug.exceptions import BadRequest, NotImplemented
-from filters import build_time_filter
+from .filters import build_time_filter
 import re
 
 DEFAULT_RESULT_LIMIT=1000

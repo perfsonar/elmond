@@ -13,10 +13,10 @@ case "$1" in
         chmod 755 /usr/lib/perfsonar/elmond /etc/perfsonar/elmond
         chmod 644 /usr/lib/perfsonar/elmond/* /etc/perfsonar/elmond/*
 
-        #if new install, then enable
-        systemctl enable elmond.service
+        # This link is necessary because the WSGI script imports the application using a path relative to the WSGI config directory.
+        ln -sT -f /usr/lib/perfsonar/elmond /var/www/html/perfsonar/elmond/elmond
 
-        # Enable and restart apache for reverse proxy
+        # Enable and restart apache for wsgi and reverse proxy
         # apache setup
         if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
             . /usr/share/apache2/apache2-maintscript-helper
@@ -25,6 +25,7 @@ case "$1" in
             apache2_invoke enmod proxy
             apache2_invoke enmod proxy_http
             apache2_invoke enmod headers
+            apache2_invoke enconf mod-wsgi
             apache2_invoke enconf apache-elmond
         fi
     ;;

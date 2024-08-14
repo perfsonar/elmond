@@ -3,6 +3,6 @@
 #
 import sys
 
-sys.path.insert(0, '/var/www/html/elmond')
+sys.path.insert(0, '/var/www/html/perfsonar/elmond')
 
 from elmond.app import app as application

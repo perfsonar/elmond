@@ -2,7 +2,7 @@
 %define elmond_base         %{install_base}/elmond
 %define config_base         /etc/perfsonar/elmond
 %define httpd_config_base   /etc/httpd/conf.d
-%define wsgi_config_base    /var/www/html/elmond
+%define wsgi_config_base    /var/www/html/perfsonar/elmond
 
 #Version variables set by automated scripts
 %define perfsonar_auto_version 5.2.0
@@ -43,6 +43,7 @@ make ROOTPATH=%{buildroot}%{elmond_base} CONFIGPATH=%{buildroot}%{config_base} H
 rm -rf %{buildroot}
 
 %post
+# This link is necessary because the WSGI script imports the application using a path relative to the WSGI config directory.
 ln -sT -f %{elmond_base} %{wsgi_config_base}/elmond
 if [ "$1" = "1" ]; then
     #Enable and restart apache for wsgi and reverse proxy

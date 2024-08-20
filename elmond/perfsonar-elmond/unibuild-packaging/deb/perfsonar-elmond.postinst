@@ -25,7 +25,6 @@ case "$1" in
             apache2_invoke enmod proxy
             apache2_invoke enmod proxy_http
             apache2_invoke enmod headers
-            apache2_invoke enconf mod-wsgi
             apache2_invoke enconf apache-elmond
         fi
     ;;

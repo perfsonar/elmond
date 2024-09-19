@@ -1,0 +1,20 @@
+#!/bin/sh
+# prerm script for perfsonar elmond
+#
+# see: dh_installdeb(1)
+
+set -e
+
+
+case "$1" in
+    remove|upgrade|deconfigure)
+        if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
+            . /usr/share/apache2/apache2-maintscript-helper
+            apache2_invoke disconf apache-elmond
+        fi
+
+        rm -f /var/www/html/perfsonar/elmond/elmond
+    ;;
+esac
+
+exit 0

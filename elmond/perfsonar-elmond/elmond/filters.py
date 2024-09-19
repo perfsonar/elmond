@@ -1,8 +1,8 @@
 import logging
 import re
 from socket import AF_INET, AF_INET6
-from summaries import DEFAULT_SUMMARIES
-from util import *
+from .summaries import DEFAULT_SUMMARIES
+from .util import *
 from werkzeug.exceptions import BadRequest
 
 log = logging.getLogger('elmond')

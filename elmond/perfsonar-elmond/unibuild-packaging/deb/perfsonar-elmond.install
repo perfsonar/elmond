@@ -1,4 +1,4 @@
 elmond/*.py /usr/lib/perfsonar/elmond
 config/* /etc/perfsonar/elmond
-systemd/elmond.service /lib/systemd/system/
+elmond.wsgi /var/www/html/perfsonar/elmond/
 apache/* /etc/apache2/conf-available/

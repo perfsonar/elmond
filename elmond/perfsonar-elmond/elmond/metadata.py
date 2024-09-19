@@ -1,10 +1,10 @@
 import logging
 import re
-from filters import build_filters
+from .filters import build_filters
 from flask import current_app as app
-from summaries import DEFAULT_SUMMARIES
+from .summaries import DEFAULT_SUMMARIES
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
-from util import *
+from .util import *
 
 DEFAULT_RESULT_LIMIT=1000
 MAX_RESULT_LIMIT=10000

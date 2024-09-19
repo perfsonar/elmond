@@ -5,7 +5,7 @@ import isodate
 import time
 from flask import current_app as app
 from socket import getaddrinfo, AF_INET, AF_INET6, SOL_TCP, SOCK_STREAM
-from summaries import INVERSE_SUMMARY_TYPES
+from .summaries import INVERSE_SUMMARY_TYPES
 from werkzeug.exceptions import BadRequest
 
 log = logging.getLogger('elmond')

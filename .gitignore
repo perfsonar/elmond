@@ -3,3 +3,5 @@ unibuild-log
 unibuild-work/
 unibuild-repo/
 multiarch_build/
+# MacOS artifacts
+.DS_Store

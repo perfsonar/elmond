@@ -3,10 +3,10 @@ import logging.config
 import json
 import os
 import sys
-from data import EsmondData
+from .data import EsmondData
 from opensearchpy import OpenSearch
 from flask import Flask, Response, request, g
-from metadata import EsmondMetadata
+from .metadata import EsmondMetadata
 from werkzeug.exceptions import NotFound
 
 def create_app(test_config=None):
@@ -38,9 +38,9 @@ def create_app(test_config=None):
     app.config['ELMOND'] = config
     
     #todo: error handling
-    es_hosts = config.get("ELASTIC_HOSTS", ['localhost'])
-    elastic_params = config.get("ELASTIC_PARAMS", {})
-    es = OpenSearch(es_hosts, **elastic_params)
+    es_hosts = config.get("OPENSEARCH_HOSTS", ['localhost'])
+    opensearch_params = config.get("OPENSEARCH_PARAMS", {})
+    es = OpenSearch(es_hosts, **opensearch_params)
 
     #function for dumping a json response
     def json_response(obj):
@@ -76,6 +76,8 @@ def create_app(test_config=None):
         return json_response(data)
     
     return app
-    
+
+app = create_app()
+
 if __name__ == '__main__':
-    create_app().run(debug=False, host='localhost')
+    app.run(debug=False, host='localhost')

@@ -53,9 +53,9 @@ CONVERSION_FACTOR_MAP = {
 
 log = logging.getLogger('elmond')
     
-def _build_esmond_histogram(elastic_histo, conversion_factor=1):
-    values = elastic_histo.get("values", [])
-    counts = elastic_histo.get("counts", [])
+def _build_esmond_histogram(opensearch_histo, conversion_factor=1):
+    values = opensearch_histo.get("values", [])
+    counts = opensearch_histo.get("counts", [])
     #make sure same length
     num_buckets = len(values)
     if  num_buckets != len(counts):

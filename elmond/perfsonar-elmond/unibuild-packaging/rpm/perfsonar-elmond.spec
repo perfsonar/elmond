@@ -5,7 +5,7 @@
 %define wsgi_config_base    /var/www/html/perfsonar/elmond
 
 #Version variables set by automated scripts
-%define perfsonar_auto_version 5.2.5
+%define perfsonar_auto_version 5.2.6
 %define perfsonar_auto_relnum 1
 
 Name:			perfsonar-elmond
